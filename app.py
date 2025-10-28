@@ -117,12 +117,17 @@ if st.session_state["character_desc"]:
                         f"주인공 정보:\n{character}"
                     )
                     try:
-                        resp = client.responses.create(
-                            model="gpt-4o-mini",
-                            input=prompt,
-                            max_output_tokens=450,
-                        )
-                        auto_text = resp.output_text.strip()
+resp = client.responses.create(
+    model="gpt-4o-mini",
+    input=prompt,
+    max_output_tokens=300,
+)
+# 안전하게 텍스트 추출
+try:
+    desc = resp.output_text.strip()
+except AttributeError:
+    desc = resp.output[0].content[0].text.strip() if resp.output else ""
+
                         st.session_state[f"story_{i}"] = auto_text
                         st.session_state[f"auto_{i}"] = True
                         st.info("자동으로 이어썼어요 ✨")
